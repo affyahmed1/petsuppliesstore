@@ -1,1 +1,261 @@
 @import "tailwindcss";
+
+@theme {
+  /* ————— KIN & TAIL design tokens ————— */
+  --color-ink: #120d0a; /* Pure Dark */
+  --color-espresso: #211611; /* Deep Espresso */
+  --color-cocoa: #33231b; /* Dark Cocoa */
+  --color-mocha: #5a3a28; /* Warm Mocha */
+  --color-cream: #e8c978; /* Golden Cream */
+  --color-champagne: #f3de9a; /* Soft Champagne */
+  --color-ivory: #faf4e6; /* Warm Ivory */
+  --color-linen: #ece1ca; /* image resting tone */
+
+  --font-display: "Cormorant Garamond", "Times New Roman", serif;
+  --font-body: "Manrope", "Avenir Next", "Segoe UI", sans-serif;
+
+  --ease-lux: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ————— base ————— */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-espresso);
+  color: var(--color-ivory);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+[id] {
+  scroll-margin-top: 5.5rem;
+}
+
+::selection {
+  background: var(--color-cream);
+  color: var(--color-espresso);
+}
+
+:focus-visible {
+  outline: 1.5px solid var(--color-cream);
+  outline-offset: 3px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-ink);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-cocoa);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-mocha);
+}
+
+/* film grain over everything — quiet, tactile warmth */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+}
+
+/* ————— underline links ————— */
+.u-line {
+  position: relative;
+}
+.u-line::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.5s var(--ease-lux);
+}
+.u-line:hover::after,
+.u-line:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* ————— reveal system ————— */
+.rv-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1s var(--ease-lux), transform 1s var(--ease-lux);
+  will-change: opacity, transform;
+}
+.rv-fade {
+  opacity: 0;
+  transition: opacity 1.3s var(--ease-lux);
+}
+.rv-mask {
+  overflow: hidden;
+}
+.rv-mask .rv-mask-inner {
+  display: block;
+  transform: translateY(112%);
+  transition: transform 1.2s var(--ease-lux);
+  will-change: transform;
+}
+.in.rv-up,
+.in .rv-up {
+  opacity: 1;
+  transform: none;
+}
+.in.rv-fade,
+.in .rv-fade {
+  opacity: 1;
+}
+.rv-mask.in .rv-mask-inner {
+  transform: none;
+}
+
+/* ————— keyframes ————— */
+@keyframes kenburns {
+  from {
+    transform: scale(1.15);
+  }
+  to {
+    transform: scale(1.03);
+  }
+}
+.kenburns {
+  animation: kenburns 18s var(--ease-lux) both;
+}
+
+@keyframes tickermove {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-ticker {
+  animation: tickermove 46s linear infinite;
+}
+.ticker:hover .animate-ticker {
+  animation-play-state: paused;
+}
+
+@keyframes scrolldrop {
+  0% {
+    transform: translateY(-110%);
+  }
+  60%,
+  100% {
+    transform: translateY(220%);
+  }
+}
+.animate-scrolldrop {
+  animation: scrolldrop 2.4s var(--ease-lux) infinite;
+}
+
+@keyframes toastin {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-toastin {
+  animation: toastin 0.5s var(--ease-lux) both;
+}
+
+@keyframes stepin {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-stepin {
+  animation: stepin 0.6s var(--ease-lux) both;
+}
+
+@keyframes softpulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+.animate-softpulse {
+  animation: softpulse 2.4s ease-in-out infinite;
+}
+
+@keyframes badgepop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.animate-badgepop {
+  animation: badgepop 0.45s var(--ease-lux);
+}
+
+@keyframes dotflicker {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.animate-dot {
+  animation: dotflicker 1.3s ease-in-out infinite;
+}
+
+/* ————— reduced motion ————— */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .rv-up,
+  .rv-fade,
+  .rv-mask .rv-mask-inner {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .kenburns,
+  .animate-ticker,
+  .animate-scrolldrop,
+  .animate-softpulse,
+  .animate-dot {
+    animation: none !important;
+  }
+}
