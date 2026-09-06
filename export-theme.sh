@@ -43,6 +43,9 @@ rm -rf "$STAGE/.git" "$STAGE/.DS_Store" "$STAGE/Thumbs.db"
 # --- 3. Init, commit, push to main -------------------------------------------
 cd "$STAGE"
 git init -b "$BRANCH" -q
+# Ensure a commit identity exists (repo-local only — never touches your global Git settings)
+[ -n "$(git config user.email)" ] || git config user.email "affyahmed1@users.noreply.github.com"
+[ -n "$(git config user.name)" ]  || git config user.name  "affyahmed1"
 git add -A
 git commit -q -m "Kin & Tail — Shopify Online Store 2.0 theme (initial import)"
 git remote add origin "$REPO_URL"

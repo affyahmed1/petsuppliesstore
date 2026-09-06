@@ -36,6 +36,9 @@ Remove-Item -Recurse -Force (Join-Path $Stage ".git") -ErrorAction SilentlyConti
 Push-Location $Stage
 try {
     git init -b $Branch -q
+    # Ensure a commit identity exists (repo-local only — never touches your global Git settings)
+    if (-not (git config user.email)) { git config user.email "affyahmed1@users.noreply.github.com" }
+    if (-not (git config user.name))  { git config user.name  "affyahmed1" }
     git add -A
     git commit -q -m "Kin & Tail — Shopify Online Store 2.0 theme (initial import)"
     git remote add origin $RepoUrl
