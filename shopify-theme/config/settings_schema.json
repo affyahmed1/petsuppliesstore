@@ -1,0 +1,129 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Kin & Tail",
+    "theme_version": "1.0.0",
+    "theme_author": "Kin & Tail Studio",
+    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
+    "theme_support_url": "https://support.shopify.com/"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Brand palette"
+      },
+      {
+        "type": "color",
+        "id": "color_ink",
+        "label": "Pure dark",
+        "default": "#120d0a"
+      },
+      {
+        "type": "color",
+        "id": "color_espresso",
+        "label": "Deep espresso (primary)",
+        "default": "#211611"
+      },
+      {
+        "type": "color",
+        "id": "color_cocoa",
+        "label": "Dark cocoa",
+        "default": "#33231b"
+      },
+      {
+        "type": "color",
+        "id": "color_mocha",
+        "label": "Warm mocha",
+        "default": "#5a3a28"
+      },
+      {
+        "type": "color",
+        "id": "color_cream",
+        "label": "Golden cream (accent)",
+        "default": "#e8c978"
+      },
+      {
+        "type": "color",
+        "id": "color_champagne",
+        "label": "Soft champagne",
+        "default": "#f3de9a"
+      },
+      {
+        "type": "color",
+        "id": "color_ivory",
+        "label": "Warm ivory",
+        "default": "#faf4e6"
+      }
+    ]
+  },
+  {
+    "name": "Logo & Favicon",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo image",
+        "info": "Optional. When empty, the typographic KIN & TAIL wordmark is used."
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "label": "Logo width",
+        "min": 40,
+        "max": 240,
+        "step": 4,
+        "unit": "px",
+        "default": 120
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon",
+        "info": "64 x 64px recommended. A paw favicon is used when empty."
+      }
+    ]
+  },
+  {
+    "name": "Commerce",
+    "settings": [
+      {
+        "type": "range",
+        "id": "free_shipping_threshold",
+        "label": "Free shipping threshold",
+        "min": 0,
+        "max": 500,
+        "step": 5,
+        "unit": "$",
+        "default": 120,
+        "info": "Shown as a progress note in the cart drawer."
+      },
+      {
+        "type": "checkbox",
+        "id": "show_compare_at",
+        "label": "Show compare-at prices",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Social",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Social accounts"
+      },
+      {
+        "type": "url",
+        "id": "social_instagram",
+        "label": "Instagram URL"
+      },
+      {
+        "type": "url",
+        "id": "social_x",
+        "label": "X (Twitter) URL"
+      }
+    ]
+  }
+]

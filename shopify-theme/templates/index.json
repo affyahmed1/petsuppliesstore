@@ -1,0 +1,32 @@
+{
+  "sections": {
+    "header": { "type": "header", "settings": {} },
+    "hero": { "type": "hero", "settings": {} },
+    "ticker": { "type": "announcement-ticker", "settings": {} },
+    "friendship": { "type": "friendship-story", "settings": {} },
+    "worlds": { "type": "category-worlds", "settings": {} },
+    "collection": { "type": "featured-collection", "settings": {} },
+    "craft": { "type": "craft-story", "settings": {} },
+    "care": { "type": "care-section", "settings": {} },
+    "story": { "type": "brand-story", "settings": {} },
+    "concierge": { "type": "concierge", "settings": {} },
+    "finalcta": { "type": "final-cta", "settings": {} },
+    "footer": { "type": "footer", "settings": {} },
+    "overlays": { "type": "overlays", "settings": {} }
+  },
+  "order": [
+    "header",
+    "hero",
+    "ticker",
+    "friendship",
+    "worlds",
+    "collection",
+    "craft",
+    "care",
+    "story",
+    "concierge",
+    "finalcta",
+    "footer",
+    "overlays"
+  ]
+}

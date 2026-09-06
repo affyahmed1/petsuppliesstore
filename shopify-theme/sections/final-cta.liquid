@@ -1,0 +1,47 @@
+<section class="sec-dark final-cta">
+  <div class="container">
+    <div class="final-cta__inner">
+      <div class="rv-up">
+        <span style="display: block; margin-inline: auto; height: 1px; width: 5rem; background: var(--cream);"></span>
+        <p style="margin-top: 1.75rem; font-size: 10px; font-weight: 600; letter-spacing: 0.4em; text-transform: uppercase; color: rgba(250,244,230,0.45);">
+          {{ section.settings.eyebrow }}
+        </p>
+      </div>
+      <h2 class="display display-xl" style="margin-top: 2rem;">
+        <span class="rv-mask"><span class="rv-mask-inner">{{ section.settings.heading_1 }}</span></span>
+        <span class="rv-mask" style="transition-delay: 160ms;"><span class="rv-mask-inner"><em>{{ section.settings.heading_2 }}</em></span></span>
+      </h2>
+      <div class="rv-up" style="transition-delay: 340ms;">
+        <p class="copy" style="margin-top: 2rem;">{{ section.settings.body }}</p>
+      </div>
+      <div class="rv-up" style="transition-delay: 440ms;">
+        <a class="btn btn--cream" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">
+          {{ section.settings.button_label }}
+          {%- render 'icons', name: 'arrow-right', class: 'icon icon--sm' -%}
+        </a>
+        <small>{{ section.settings.footnote }}</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Final CTA",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The closing frame" },
+    { "type": "text", "id": "heading_1", "label": "Heading line 1", "default": "For every kind of" },
+    { "type": "text", "id": "heading_2", "label": "Heading line 2 (italic)", "default": "companion." },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Body",
+      "default": "Dogs. Cats. And the people who love them. Everything your friendship needs, brought together with care."
+    },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop the Collection" },
+    { "type": "url", "id": "button_link", "label": "Button link", "info": "Falls back to the catalog page." },
+    { "type": "text", "id": "footnote", "label": "Footnote", "default": "Complimentary shipping over $120" }
+  ],
+  "presets": [{ "name": "Final CTA" }]
+}
+{% endschema %}

@@ -1,0 +1,28 @@
+{
+  "current": {
+    "color_ink": "#120d0a",
+    "color_espresso": "#211611",
+    "color_cocoa": "#33231b",
+    "color_mocha": "#5a3a28",
+    "color_cream": "#e8c978",
+    "color_champagne": "#f3de9a",
+    "color_ivory": "#faf4e6",
+    "logo_width": 120,
+    "free_shipping_threshold": 120,
+    "show_compare_at": true
+  },
+  "presets": {
+    "Kin & Tail": {
+      "color_ink": "#120d0a",
+      "color_espresso": "#211611",
+      "color_cocoa": "#33231b",
+      "color_mocha": "#5a3a28",
+      "color_cream": "#e8c978",
+      "color_champagne": "#f3de9a",
+      "color_ivory": "#faf4e6",
+      "logo_width": 120,
+      "free_shipping_threshold": 120,
+      "show_compare_at": true
+    }
+  }
+}

@@ -1,0 +1,238 @@
+{%- liquid
+  assign p = product
+  assign current = p.selected_or_first_available_variant
+  assign on_sale = false
+  if settings.show_compare_at and current.compare_at_price > current.price
+    assign on_sale = true
+  endif
+-%}
+<section class="pdp" data-pdp data-product-id="{{ p.id }}" data-money-format="{{ shop.money_format | escape }}">
+  <div class="container">
+    <div class="pdp-grid">
+      <div class="pdp-gallery">
+        <div class="rv-fade">
+          <div class="pdp-main-img">
+            {%- if on_sale -%}<span class="badge-sale">{{ 'products.product.on_sale' | t }}</span>{%- endif -%}
+            {%- if p.featured_image != blank -%}
+              <img
+                data-main-image
+                src="{{ p.featured_image | image_url: width: 1200 }}"
+                alt="{{ p.featured_image.alt | default: p.title | escape }}"
+                width="{{ p.featured_image.width }}"
+                height="{{ p.featured_image.height }}"
+                fetchpriority="high">
+            {%- else -%}
+              {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+          </div>
+          {%- if p.images.size > 1 -%}
+            <div class="pdp-thumbs">
+              {%- for img in p.images -%}
+                <button
+                  type="button"
+                  class="pdp-thumb {% if forloop.first %}is-active{% endif %}"
+                  data-thumb
+                  data-full="{{ img | image_url: width: 1200 }}"
+                  aria-label="View image {{ forloop.index }}">
+                  <img src="{{ img | image_url: width: 160 }}" alt="{{ img.alt | default: p.title | escape }}" loading="lazy" decoding="async">
+                </button>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="pdp-info">
+        <p class="pdp-type rv-up">{{ p.type | default: p.vendor | escape }}</p>
+        <h1 class="pdp-title">
+          <span class="rv-mask"><span class="rv-mask-inner">{{ p.title }}</span></span>
+        </h1>
+        <div class="pdp-price rv-up" style="transition-delay: 120ms;">
+          {%- render 'price', product: p, variant: current -%}
+          {%- if on_sale -%}
+            <span class="save-note" data-save-note></span>
+          {%- endif -%}
+        </div>
+        {%- if p.metafields.kt.tagline.value != blank -%}
+          <p class="pdp-tagline rv-up" style="transition-delay: 160ms;">{{ p.metafields.kt.tagline.value }}</p>
+        {%- endif -%}
+
+        <hr class="pdp-rule">
+
+        <div class="pdp-desc rv-up" style="transition-delay: 200ms;">
+          {{ p.description }}
+        </div>
+
+        <form action="{{ routes.cart_add_url }}" method="post" data-pdp-form novalidate>
+          <input type="hidden" name="id" data-variant-input value="{{ current.id }}">
+
+          {%- for option in p.options_with_values -%}
+            <p class="pdp-opt-label">{{ option.name }} — <span data-opt-selected="{{ forloop.index0 }}">{{ current.options[forloop.index0] }}</span></p>
+            <div class="opt-row" data-opt-row="{{ forloop.index0 }}">
+              {%- for value in option.values -%}
+                <button
+                  type="button"
+                  class="opt-btn {% if current.options[forloop.parentloop.index0] == value or (current.options[forloop.parentloop.index0] == blank and forloop.first) %}is-selected{% endif %}"
+                  data-opt-btn
+                  data-opt-index="{{ forloop.parentloop.index0 }}"
+                  data-opt-value="{{ value | escape }}"
+                  aria-pressed="{% if current.options[forloop.parentloop.index0] == value %}true{% else %}false{% endif %}">
+                  {{ value }}
+                </button>
+              {%- endfor -%}
+            </div>
+          {%- endfor -%}
+
+          <div class="pdp-buy">
+            <div class="qty">
+              <button type="button" data-qty-dec aria-label="{{ 'general.cart.decrease' | t }}" disabled>
+                {%- render 'icons', name: 'minus', class: 'icon icon--sm' -%}
+              </button>
+              <span data-qty-value aria-live="polite">1</span>
+              <button type="button" data-qty-inc aria-label="{{ 'general.cart.increase' | t }}">
+                {%- render 'icons', name: 'plus', class: 'icon icon--sm' -%}
+              </button>
+            </div>
+            <button type="submit" class="btn btn--solid-light" style="flex: 1; justify-content: center;" data-add-btn {% unless current.available %}disabled{% endunless %}>
+              <span data-add-label>
+                {%- if current.available -%}
+                  {{ 'products.product.add_to_cart' | t }}
+                {%- else -%}
+                  {{ 'products.product.sold_out' | t }}
+                {%- endif -%}
+              </span>
+              {%- render 'icons', name: 'bag', class: 'icon icon--sm' -%}
+            </button>
+          </div>
+          <p class="pdp-stock {% unless current.available %}is-out{% endunless %}" data-stock-note>
+            <i></i>
+            {%- if current.available -%}{{ 'products.product.in_stock' | t }}{%- else -%}{{ 'products.product.sold_out' | t }}{%- endif -%}
+          </p>
+        </form>
+
+        <button
+          type="button"
+          class="btn btn--solid-light pdp-wish"
+          style="width: 100%; justify-content: center; background: transparent; color: var(--espresso); border: 1px solid rgba(33,22,17,0.25);"
+          data-wish-toggle
+          aria-pressed="false"
+          aria-label="{{ 'products.product.save_to_wishlist' | t }}"
+          data-wish-handle="{{ p.handle }}"
+          data-wish-variant="{{ current.id }}"
+          data-wish-title="{{ p.title | escape }}"
+          data-wish-price="{{ current.price }}"
+          data-wish-image="{{ p.featured_image | image_url: width: 240 }}"
+          data-wish-url="{{ p.url }}">
+          <span data-wish-label>{{ 'products.product.save_to_wishlist' | t }}</span>
+          {%- render 'icons', name: 'heart', class: 'icon icon--sm' -%}
+        </button>
+
+        {%- if section.blocks.size > 0 -%}
+          <div class="pdp-details">
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'details' -%}
+                <div class="pdp-detail {% if forloop.first %}is-open{% endif %}" {{ block.shopify_attributes }}>
+                  <button type="button" data-accordion-toggle aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}">
+                    {{ block.settings.title }}
+                    {%- render 'icons', name: 'plus', class: 'icon icon--sm' -%}
+                  </button>
+                  <div class="pdp-detail__body">
+                    <div class="pdp-detail__inner">
+                      {%- if block.settings.items != blank -%}
+                        <ul>
+                          {%- for item in block.settings.items | split: '|' -%}
+                            {%- assign it = item | strip -%}
+                            {%- if it != blank -%}<li>{{ it }}</li>{%- endif -%}
+                          {%- endfor -%}
+                        </ul>
+                      {%- else -%}
+                        {{ block.settings.text }}
+                      {%- endif -%}
+                    </div>
+                  </div>
+                </div>
+              {%- elsif block.type == 'share_note' -%}
+                <p class="pdp-meta" {{ block.shopify_attributes }}>{{ block.settings.text }}</p>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+  <script type="application/json" data-pdp-variants>
+    {{ p.variants | json }}
+  </script>
+
+  {%- if p.images.size > 0 -%}
+    <script type="application/json" data-pdp-images>
+      {{ p.images | json }}
+    </script>
+  {%- endif -%}
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": {{ p.title | json }},
+      "url": "{{ shop.url }}{{ p.url }}",
+      "image": [{{ p.featured_image | image_url: width: 1200 | prepend: 'https:' | json }}],
+      "description": {{ p.description | strip_html | truncate: 300 | json }},
+      "sku": {{ current.sku | json }},
+      "brand": { "@type": "Brand", "name": {{ p.vendor | json }} },
+      "offers": {
+        "@type": "Offer",
+        "price": {{ current.price | money_without_currency | json }},
+        "priceCurrency": {{ cart.currency.iso_code | json }},
+        "availability": "https://schema.org/{% if current.available %}InStock{% else %}OutOfStock{% endif %}",
+        "url": "{{ shop.url }}{{ p.url }}"
+      }
+    }
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "Product",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "details",
+      "name": "Details accordion",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Materials & details" },
+        {
+          "type": "textarea",
+          "id": "items",
+          "label": "List items",
+          "default": "Vegetable-tanned cognac leather | Solid brass hardware | Hand-stitched seams",
+          "info": "Separate items with a pipe ( | )."
+        },
+        { "type": "richtext", "id": "text", "label": "Or rich text" }
+      ]
+    },
+    {
+      "type": "share_note",
+      "name": "Meta note",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Complimentary shipping over $120 · 30-day considered returns."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product",
+      "blocks": [
+        { "type": "details" },
+        { "type": "share_note" }
+      ]
+    }
+  ]
+}
+{% endschema %}

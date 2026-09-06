@@ -1,0 +1,17 @@
+<section class="plain-page">
+  <div class="container">
+    <h1>
+      <span class="rv-mask"><span class="rv-mask-inner">{{ page.title }}</span></span>
+    </h1>
+    <div class="rte rv-up" style="transition-delay: 120ms;">
+      {{ page.content }}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Page",
+  "settings": []
+}
+{% endschema %}

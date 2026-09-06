@@ -1,0 +1,22 @@
+<section class="plain-page">
+  <div class="container notfound">
+    <p class="big">404</p>
+    <h1 class="display" style="margin-top: 1.5rem;">This corner of the house is empty.</h1>
+    <p class="rte" style="margin-inline: auto; text-align: center;">
+      Either it moved, or it was never here. The collection, however, is exactly where you left it.
+    </p>
+    <div style="margin-top: 2.5rem;">
+      <a class="btn btn--solid-light" href="{{ routes.root_url }}">Back home</a>
+      <a class="btn btn--ghost-dark" style="color: var(--espresso); border-color: rgba(33,22,17,0.3); margin-left: 0.75rem;" href="{{ routes.all_products_collection_url }}">
+        Shop the Collection
+      </a>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "404",
+  "settings": []
+}
+{% endschema %}

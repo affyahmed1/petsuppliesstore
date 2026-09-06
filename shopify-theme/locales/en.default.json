@@ -1,0 +1,82 @@
+{
+  "general": {
+    "accessibility": {
+      "skip_to_content": "Skip to content",
+      "close": "Close",
+      "menu": "Menu"
+    },
+    "cart": {
+      "title": "Your Bag",
+      "added": "Added to your bag",
+      "empty": "Your bag is empty.",
+      "empty_hint": "The good news: everything worth having is one scroll away.",
+      "subtotal": "Subtotal",
+      "note": "Shipping and taxes calculated at checkout.",
+      "checkout": "Checkout",
+      "free_ship_left": "You're {{ amount }} away from complimentary shipping.",
+      "free_ship_met": "Complimentary shipping unlocked.",
+      "remove": "Remove",
+      "decrease": "Decrease quantity",
+      "increase": "Increase quantity"
+    },
+    "wishlist": {
+      "title": "Wishlist",
+      "saved": "Saved to your wishlist",
+      "removed": "Removed from wishlist",
+      "empty": "Nothing saved yet.",
+      "empty_hint": "Tap the heart on any piece to keep it here for later.",
+      "move_to_bag": "Move to Bag",
+      "remove": "Remove"
+    },
+    "search": {
+      "placeholder": "Search the collection…",
+      "suggested": "Suggested",
+      "often": "Often sought",
+      "results": "Results",
+      "no_results": "Nothing on our shelves for",
+      "browse": "Browse the collection"
+    },
+    "concierge": {
+      "added": "Added from your edit"
+    },
+    "newsletter": {
+      "heading": "Quiet mail.",
+      "text": "Occasional letters on new pieces and the animals they're made for. No noise.",
+      "placeholder": "Your email",
+      "submit": "Subscribe",
+      "thanks": "Thank you — welcome to the household."
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to Bag",
+      "sold_out": "Sold out",
+      "on_sale": "Sale",
+      "choose_options": "Choose options",
+      "unavailable": "Unavailable",
+      "quantity": "Quantity",
+      "in_stock": "In stock — ships in 2–4 days",
+      "save": "Save",
+      "save_to_wishlist": "Save to Wishlist",
+      "saved_to_wishlist": "Saved to Wishlist"
+    }
+  },
+  "sections": {
+    "cart": {
+      "update": "Update bag",
+      "checkout": "Check out",
+      "continue": "or continue shopping",
+      "note": "Shipping and taxes calculated at checkout."
+    },
+    "search": {
+      "title": "Search",
+      "placeholder": "What are you looking for?",
+      "results_for": "Results for",
+      "no_results": "Nothing found. Try another word, or browse the collection."
+    },
+    "collection": {
+      "products": "Products",
+      "sort": "Sort"
+    }
+  }
+}
