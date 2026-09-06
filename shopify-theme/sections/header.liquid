@@ -1,0 +1,84 @@
+{%- liquid
+  assign menu = linklists[section.settings.menu]
+-%}
+<header class="site-header" data-header>
+  <div class="container">
+    <div class="header-grid">
+      <div class="header-left">
+        <button type="button" class="icon-btn menu-toggle" data-open-menu aria-label="{{ 'general.accessibility.menu' | t }}" aria-expanded="false">
+          {%- render 'icons', name: 'menu', class: 'icon' -%}
+        </button>
+        <nav class="main-nav" aria-label="Primary">
+          {%- for link in menu.links -%}
+            <a href="{{ link.url }}" class="u-line">{{ link.title }}</a>
+          {%- endfor -%}
+        </nav>
+      </div>
+
+      <a href="{{ routes.root_url }}" class="wordmark" aria-label="{{ shop.name }} — home">
+        {%- if settings.logo != blank -%}
+          <img src="{{ settings.logo | image_url: width: settings.logo_width }}" alt="{{ shop.name }}" style="max-width: {{ settings.logo_width }}px;">
+        {%- else -%}
+          KIN <span class="amp">&amp;</span> TAIL
+        {%- endif -%}
+      </a>
+
+      <div class="header-right">
+        <button type="button" class="icon-btn" data-open-search aria-label="{{ 'general.search.placeholder' | t }} (press /)">
+          {%- render 'icons', name: 'search', class: 'icon' -%}
+        </button>
+        <button type="button" class="icon-btn" data-open-wish aria-label="{{ 'general.wishlist.title' | t }}">
+          {%- render 'icons', name: 'heart', class: 'icon' -%}
+          <span class="badge" data-wish-count hidden>0</span>
+        </button>
+        <button type="button" class="icon-btn" data-open-cart aria-label="{{ 'general.cart.title' | t }}">
+          {%- render 'icons', name: 'bag', class: 'icon' -%}
+          <span class="badge" data-cart-count {% if cart.item_count == 0 %}hidden{% endif %}>{{ cart.item_count }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-menu" data-mobile-menu role="dialog" aria-modal="true" aria-label="{{ 'general.accessibility.menu' | t }}">
+  <div class="mobile-menu__top">
+    <a href="{{ routes.root_url }}" class="wordmark">KIN <span class="amp">&amp;</span> TAIL</a>
+    <button type="button" class="icon-btn" data-close-menu aria-label="{{ 'general.accessibility.close' | t }}">
+      {%- render 'icons', name: 'close', class: 'icon' -%}
+    </button>
+  </div>
+  <nav aria-label="Mobile">
+    {%- for link in menu.links -%}
+      <a href="{{ link.url }}" style="transition-delay: {{ forloop.index0 | times: 60 | plus: 120 }}ms;">{{ link.title }}</a>
+    {%- endfor -%}
+    {%- if section.settings.show_concierge_link -%}
+      <a href="{{ routes.root_url }}#concierge" style="transition-delay: {{ menu.links.size | times: 60 | plus: 120 }}ms;">The Concierge</a>
+    {%- endif -%}
+  </nav>
+  <p class="mobile-menu__foot">Dogs &amp; Cats — Est. 2021</p>
+</div>
+
+<script type="application/json" id="kt-header-data">
+  { "cartCount": {{ cart.item_count }}, "itemCount": {{ cart.item_count }} }
+</script>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu",
+      "info": "Manage links in Shopify Admin → Navigation."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_concierge_link",
+      "label": "Show concierge link in mobile menu",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

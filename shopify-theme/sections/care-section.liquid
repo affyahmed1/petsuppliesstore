@@ -1,0 +1,119 @@
+<section class="sec-light" id="care">
+  <div class="container">
+    <div class="care-grid">
+      <div class="care-copy">
+        <div class="rv-up">
+          <div class="eyebrow">
+            <span class="eyebrow__index">{{ section.settings.index }}</span>
+            <span class="eyebrow__rule"></span>
+            <span class="eyebrow__label">{{ section.settings.eyebrow }}</span>
+          </div>
+        </div>
+        <h2 class="display display-lg" style="margin-top: 2rem;">
+          <span class="rv-mask"><span class="rv-mask-inner">{{ section.settings.heading_1 }}</span></span>
+          <span class="rv-mask" style="transition-delay: 120ms;"><span class="rv-mask-inner"><em>{{ section.settings.heading_2 }}</em></span></span>
+        </h2>
+        <div class="rv-up" style="transition-delay: 220ms;">
+          <p class="copy" style="margin-top: 1.75rem; max-width: 24rem;">{{ section.settings.body }}</p>
+        </div>
+        {%- if section.settings.link_label != blank -%}
+          <div class="rv-up" style="transition-delay: 300ms;">
+            <a class="inline-link" style="margin-top: 2rem; display: inline-flex;" href="{{ section.settings.link_url | default: routes.root_url | append: '#concierge' }}">
+              {{ section.settings.link_label }}
+              {%- render 'icons', name: 'arrow-right', class: 'icon icon--sm' -%}
+            </a>
+          </div>
+        {%- endif -%}
+
+        <div class="care-img rv-fade" style="transition-delay: 200ms;">
+          {%- if section.settings.image != blank -%}
+            <img data-parallax="0.05" src="{{ section.settings.image | image_url: width: 1000 }}" alt="{{ section.settings.image.alt | default: section.settings.image_alt | escape }}" loading="lazy" decoding="async">
+          {%- else -%}
+            <img data-parallax="0.05" src="{{ section.settings.fallback_image_url }}" alt="{{ section.settings.image_alt | escape }}" loading="lazy" decoding="async">
+          {%- endif -%}
+        </div>
+        <p class="rv-up" style="transition-delay: 280ms;">{{ section.settings.image_caption }}</p>
+      </div>
+
+      <div class="care-list">
+        {%- for block in section.blocks -%}
+          <div class="care-item rv-up" style="transition-delay: {{ forloop.index0 | times: 100 }}ms;" {{ block.shopify_attributes }}>
+            <span class="care-item__n">0{{ forloop.index }}</span>
+            {%- render 'icons', name: block.settings.icon, class: 'icon' -%}
+            <div>
+              <h3>{{ block.settings.title }}</h3>
+              <p>{{ block.settings.text }}</p>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Care",
+  "settings": [
+    { "type": "text", "id": "index", "label": "Index", "default": "05" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Care" },
+    { "type": "text", "id": "heading_1", "label": "Heading line 1", "default": "Care is" },
+    { "type": "text", "id": "heading_2", "label": "Heading line 2 (italic)", "default": "a language." },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Body",
+      "default": "Spoken in brushes and warm bowls, in the bed moved closer to the radiator, in the walk taken the long way. We make the vocabulary."
+    },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "Ask the concierge" },
+    { "type": "url", "id": "link_url", "label": "Link URL" },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "url", "id": "fallback_image_url", "label": "Fallback image URL" },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Image alt text",
+      "default": "Hands gently brushing a relaxed brown dog in warm home light"
+    },
+    { "type": "text", "id": "image_caption", "label": "Image caption", "default": "The Sunday brush — a household ritual" }
+  ],
+  "blocks": [
+    {
+      "type": "care_item",
+      "name": "Care topic",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "brush", "label": "Brush" },
+            { "value": "bowl", "label": "Bowl" },
+            { "value": "moon", "label": "Moon" },
+            { "value": "pulse", "label": "Pulse" }
+          ],
+          "default": "brush"
+        },
+        { "type": "text", "id": "title", "label": "Title", "default": "Grooming" },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Ten quiet minutes with the right brush — less maintenance, more conversation."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Care",
+      "blocks": [
+        { "type": "care_item", "settings": { "icon": "brush", "title": "Grooming", "text": "Ten quiet minutes with the right brush — less maintenance, more conversation." } },
+        { "type": "care_item", "settings": { "icon": "bowl", "title": "Nutrition", "text": "Bowls at the right height, meals at the right pace, water always in reach." } },
+        { "type": "care_item", "settings": { "icon": "moon", "title": "Comfort", "text": "A bed in the warm spot, a cave in the quiet one. Rest is serious business." } },
+        { "type": "care_item", "settings": { "icon": "pulse", "title": "Wellbeing", "text": "Ritual, routine, presence. The things that keep a tail moving and a purr running." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

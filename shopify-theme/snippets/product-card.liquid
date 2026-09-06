@@ -1,0 +1,87 @@
+{%- comment -%}
+  Usage: {% render 'product-card', product: product %}
+  Optional: card_attrs (string of extra attributes, used by client-side filtering)
+{%- endcomment -%}
+{%- liquid
+  assign p = product
+  assign first_variant = p.selected_or_first_available_variant
+  assign on_sale = false
+  if settings.show_compare_at and first_variant.compare_at_price > first_variant.price
+    assign on_sale = true
+  endif
+  assign single_option = true
+  if p.options.size > 1 or p.variants.size > 1
+    assign single_option = false
+  endif
+  assign tagline = p.metafields.kt.tagline.value | default: p.description | strip_html | truncate: 64
+-%}
+<article class="p-card rv-up" {{ card_attrs }}
+  data-product-id="{{ p.id }}"
+  data-handle="{{ p.handle }}"
+  data-variant-id="{{ first_variant.id }}"
+  data-title="{{ p.title | escape }}"
+  data-price="{{ first_variant.price }}"
+  data-image="{{ p.featured_image | image_url: width: 240 }}"
+  data-url="{{ p.url }}">
+  <div class="p-card__media">
+    <a class="p-card__link" href="{{ p.url }}" aria-label="{{ p.title | escape }}">
+      <span class="p-card__img-wrap">
+        {%- if p.featured_image != blank -%}
+          <img
+            src="{{ p.featured_image | image_url: width: 800 }}"
+            srcset="{{ p.featured_image | image_url: width: 400 }} 400w, {{ p.featured_image | image_url: width: 800 }} 800w"
+            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+            alt="{{ p.featured_image.alt | default: p.title | escape }}"
+            loading="lazy"
+            decoding="async"
+            width="{{ p.featured_image.width }}"
+            height="{{ p.featured_image.height }}">
+        {%- else -%}
+          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+      </span>
+    </a>
+
+    {%- if on_sale -%}
+      <span class="badge-sale">{{ 'products.product.on_sale' | t }}</span>
+    {%- elsif p.available == false -%}
+      <span class="badge-sold">{{ 'products.product.sold_out' | t }}</span>
+    {%- endif -%}
+
+    <button
+      type="button"
+      class="p-card__wish"
+      data-wish-toggle
+      aria-pressed="false"
+      aria-label="Save {{ p.title | escape }} to wishlist"
+      data-wish-handle="{{ p.handle }}"
+      data-wish-variant="{{ first_variant.id }}"
+      data-wish-title="{{ p.title | escape }}"
+      data-wish-price="{{ first_variant.price }}"
+      data-wish-image="{{ p.featured_image | image_url: width: 240 }}"
+      data-wish-url="{{ p.url }}">
+      {%- render 'icons', name: 'heart', class: 'icon icon--sm' -%}
+    </button>
+
+    <div class="p-card__quick">
+      {%- if p.available == false -%}
+        <a href="{{ p.url }}">{{ 'products.product.sold_out' | t }}</a>
+      {%- elsif single_option -%}
+        <button type="button" data-add-variant="{{ first_variant.id }}">{{ 'products.product.add_to_cart' | t }}</button>
+      {%- else -%}
+        <a href="{{ p.url }}">{{ 'products.product.choose_options' | t }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="p-card__info">
+    <p class="p-card__type">{{ p.type | default: p.vendor | escape }}</p>
+    <div class="p-card__row">
+      <a class="p-card__title u-line" href="{{ p.url }}">{{ p.title }}</a>
+      {%- render 'price', product: p, variant: first_variant, class: 'p-card__price' -%}
+    </div>
+    {%- if tagline != blank -%}
+      <p class="p-card__tagline">{{ tagline }}</p>
+    {%- endif -%}
+  </div>
+</article>

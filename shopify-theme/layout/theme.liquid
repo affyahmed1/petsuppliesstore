@@ -1,0 +1,72 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>
+    {%- if page_title == blank -%}{{ shop.name }}{%- else -%}{{ page_title }}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}{%- endif -%}
+  </title>
+
+  {%- if page_description != blank -%}
+    <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
+
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" href="{{ settings.favicon | image_url: width: 64, height: 64 }}">
+  {%- else -%}
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23211611'/%3E%3Cg fill='%23E8C978'%3E%3Cellipse cx='20' cy='24' rx='5' ry='6.5'/%3E%3Cellipse cx='32' cy='19' rx='5.2' ry='6.8'/%3E%3Cellipse cx='44' cy='24' rx='5' ry='6.5'/%3E%3Cpath d='M32 32c7.5 0 13.5 5.6 13.5 12 0 4.4-3.3 7-7.2 7-2.3 0-4.2-1-6.3-1s-4 1-6.3 1c-3.9 0-7.2-2.6-7.2-7 0-6.4 6-12 13.5-12z'/%3E%3C/g%3E%3C/svg%3E">
+  {%- endif -%}
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+
+  {{ content_for_header }}
+
+  {{ 'kt-theme.css' | asset_url | stylesheet_tag }}
+
+  {%- comment -%} Merchant color overrides from theme settings {%- endcomment -%}
+  <style>
+    :root {
+      --espresso: {{ settings.color_espresso }};
+      --cocoa: {{ settings.color_cocoa }};
+      --mocha: {{ settings.color_mocha }};
+      --cream: {{ settings.color_cream }};
+      --champagne: {{ settings.color_champagne }};
+      --ivory: {{ settings.color_ivory }};
+      --ink: {{ settings.color_ink }};
+    }
+  </style>
+
+  <script>
+    window.KT = {
+      moneyFormat: {{ shop.money_format | json }},
+      cartUrl: {{ routes.cart_url | json }},
+      cartAddUrl: {{ routes.cart_add_url | json }},
+      cartChangeUrl: {{ routes.cart_change_url | json }},
+      searchUrl: {{ routes.search_url | json }},
+      freeShipThreshold: {{ settings.free_shipping_threshold | default: 120 | times: 100 }},
+      strings: {
+        addedToBag: {{ 'general.cart.added' | t | json }},
+        savedToWishlist: {{ 'general.wishlist.saved' | t | json }},
+        removedFromWishlist: {{ 'general.wishlist.removed' | t | json }},
+        addedToEdit: {{ 'general.concierge.added' | t | json }}
+      }
+    };
+  </script>
+</head>
+
+<body class="template-{{ template | replace: '.', '-' | handle }}">
+  <a class="skip-link" href="#MainContent">{{ 'general.accessibility.skip_to_content' | t }}</a>
+
+  <main id="MainContent">
+    {{ content_for_layout }}
+  </main>
+
+  <script src="{{ 'kt-theme.js' | asset_url }}" defer></script>
+</body>
+</html>

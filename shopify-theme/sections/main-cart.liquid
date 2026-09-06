@@ -1,0 +1,114 @@
+<section class="cart-page">
+  <div class="container">
+    <h1>
+      <span class="rv-mask"><span class="rv-mask-inner">{{ 'general.cart.title' | t }}{% if cart.item_count > 0 %} <span style="color: var(--mocha);">({{ cart.item_count }})</span>{% endif %}</span></span>
+    </h1>
+
+    {%- if cart.item_count > 0 -%}
+      <form action="{{ routes.cart_url }}" method="post" id="kt-cart-form">
+        <div class="cart-grid">
+          <div class="cart-lines rv-up">
+            {%- for item in cart.items -%}
+              <div class="cart-line">
+                <a class="cart-line__img" href="{{ item.url }}" aria-hidden="true" tabindex="-1">
+                  {%- if item.image -%}
+                    <img src="{{ item.image | image_url: width: 200 }}" alt="{{ item.product.title | escape }}" loading="lazy" decoding="async">
+                  {%- endif -%}
+                </a>
+                <div class="cart-line__body">
+                  <div class="cart-line__top">
+                    <div>
+                      <a class="cart-line__title" href="{{ item.url }}">{{ item.product.title }}</a>
+                      {%- unless item.variant.title == 'Default Title' -%}
+                        <p class="cart-line__variant">{{ item.variant.title }}</p>
+                      {%- endunless -%}
+                    </div>
+                  </div>
+                  <div class="cart-line__row">
+                    <div class="qty">
+                      <button type="button" data-line-dec="{{ item.key }}" aria-label="{{ 'general.cart.decrease' | t }}" {% if item.quantity <= 1 %}disabled{% endif %}>
+                        {%- render 'icons', name: 'minus', class: 'icon icon--sm' -%}
+                      </button>
+                      <input
+                        type="number"
+                        name="updates[]"
+                        value="{{ item.quantity }}"
+                        min="0"
+                        data-line-key="{{ item.key }}"
+                        aria-label="Quantity for {{ item.product.title | escape }}"
+                        style="width: 3.5rem; border: 0; background: none; text-align: center; font-weight: 600; outline: none;">
+                      <button type="button" data-line-inc="{{ item.key }}" aria-label="{{ 'general.cart.increase' | t }}">
+                        {%- render 'icons', name: 'plus', class: 'icon icon--sm' -%}
+                      </button>
+                    </div>
+                    <a class="u-line" style="font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(33,22,17,0.5);" href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0">
+                      {{ 'general.cart.remove' | t }}
+                    </a>
+                    <span class="cart-line__price">{{ item.final_line_price | money }}</span>
+                  </div>
+                </div>
+              </div>
+            {%- endfor -%}
+          </div>
+
+          <aside class="cart-summary rv-up" style="transition-delay: 120ms;">
+            <h2>{{ 'general.cart.subtotal' | t }}</h2>
+            <div class="summary-row">
+              <span>{{ cart.item_count }} item{% if cart.item_count != 1 %}s{% endif %}</span>
+              <span>{{ cart.total_price | money }}</span>
+            </div>
+            <div class="summary-row">
+              <span>Shipping</span>
+              <span>{% if cart.total_price >= settings.free_shipping_threshold | times: 100 %}Complimentary{% else %}Calculated at checkout{% endif %}</span>
+            </div>
+            <div class="summary-total">
+              <span>Total</span>
+              <strong>{{ cart.total_price | money }}</strong>
+            </div>
+            <p class="cart-note">{{ 'sections.cart.note' | t }}</p>
+            <div class="cart-actions">
+              <button type="submit" name="checkout" class="btn btn--solid-light btn--block">{{ 'sections.cart.checkout' | t }}</button>
+              <button type="submit" name="update" class="btn btn--block" style="background: transparent; color: var(--espresso); border-color: rgba(33,22,17,0.25);">
+                {{ 'sections.cart.update' | t }}
+              </button>
+            </div>
+            <p class="cart-note" style="text-align: center;">
+              <a class="u-line" href="{{ routes.all_products_collection_url }}">{{ 'sections.cart.continue' | t }}</a>
+            </p>
+          </aside>
+        </div>
+      </form>
+    {%- else -%}
+      <div class="empty-state rv-up">
+        <h2>{{ 'general.cart.empty' | t }}</h2>
+        <p>{{ 'general.cart.empty_hint' | t }}</p>
+        <a class="btn btn--solid-light" href="{{ routes.all_products_collection_url }}">Shop the Collection</a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<script>
+  window.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-line-inc], [data-line-dec]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var key = btn.getAttribute('data-line-inc') || btn.getAttribute('data-line-dec');
+        var input = document.querySelector('input[data-line-key="' + key + '"]');
+        if (!input) return;
+        var qty = parseInt(input.value || '0', 10);
+        qty = btn.hasAttribute('data-line-inc') ? qty + 1 : qty - 1;
+        if (qty < 0) qty = 0;
+        input.value = qty;
+        var form = document.getElementById('kt-cart-form');
+        if (form) form.submit();
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Cart",
+  "settings": []
+}
+{% endschema %}

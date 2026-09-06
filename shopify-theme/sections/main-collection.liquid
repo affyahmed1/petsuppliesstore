@@ -1,0 +1,117 @@
+<section class="coll-page">
+  <div class="container">
+    <div class="coll-head">
+      <div class="rv-up">
+        <div class="eyebrow">
+          <span class="eyebrow__index">N°</span>
+          <span class="eyebrow__rule"></span>
+          <span class="eyebrow__label">{{ collection.products_count }} {{ 'sections.collection.products' | t }}</span>
+        </div>
+      </div>
+      <h1 class="display" style="margin-top: 1.5rem;">
+        <span class="rv-mask"><span class="rv-mask-inner">{{ collection.title }}</span></span>
+      </h1>
+      {%- if collection.description != blank -%}
+        <div class="rte rv-up" style="transition-delay: 150ms;">{{ collection.description }}</div>
+      {%- endif -%}
+    </div>
+
+    <div class="coll-toolbar rv-up">
+      <p class="coll-count">
+        {%- if collection.products_count == 1 -%}
+          1 piece
+        {%- else -%}
+          {{ collection.products_count }} pieces
+        {%- endif -%}
+        {%- if current_tags.size > 0 %} · filtered{%- endif -%}
+      </p>
+      <div class="coll-toolbar-right">
+        {%- if collection.filters.size > 0 -%}
+          {%- for filter in collection.filters -%}
+            <div class="filter-group" style="margin-top: 0;">
+              <div class="filter-vals" style="margin-top: 0;">
+                {%- for value in filter.values -%}
+                  <a href="{{ value.url_to_add }}" class="{% if value.active %}is-on{% endif %}">{{ value.label }}</a>
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
+        <label for="kt-sort" class="coll-count" style="margin: 0;">{{ 'sections.collection.sort' | t }}</label>
+        <select id="kt-sort" class="sort-select" data-sort-select>
+          {%- for option in collection.sort_options -%}
+            <option value="{{ option.value }}" {% if collection.sort_by == option.value %}selected{% endif %}>
+              {{ option.name }}
+            </option>
+          {%- endfor -%}
+        </select>
+      </div>
+    </div>
+
+    {%- paginate collection.products by section.settings.products_per_page -%}
+      {%- if collection.products.size > 0 -%}
+        <div class="product-grid">
+          {%- for p in collection.products -%}
+            <div>
+              {%- render 'product-card', product: p -%}
+            </div>
+          {%- endfor -%}
+        </div>
+
+        {%- if paginate.pages > 1 -%}
+          <nav class="pagination" aria-label="Pagination">
+            {%- if paginate.previous -%}
+              <a href="{{ paginate.previous.url }}">&larr;</a>
+            {%- endif -%}
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}
+                <a href="{{ part.url }}">{{ part.title }}</a>
+              {%- else -%}
+                <span class="current">{{ part.title }}</span>
+              {%- endif -%}
+            {%- endfor -%}
+            {%- if paginate.next -%}
+              <a href="{{ paginate.next.url }}">&rarr;</a>
+            {%- endif -%}
+          </nav>
+        {%- endif -%}
+      {%- else -%}
+        <div class="empty-state">
+          <h2>The shelves are being stocked.</h2>
+          <p>Add products to this collection in Shopify Admin → Products → Collections.</p>
+          <a class="btn btn--solid-light" href="{{ routes.all_products_collection_url }}">Browse everything</a>
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+<script>
+  window.addEventListener('DOMContentLoaded', function () {
+    var sort = document.querySelector('[data-sort-select]');
+    if (sort) {
+      sort.addEventListener('change', function () {
+        var url = new URL(window.location.href);
+        url.searchParams.set('sort_by', sort.value);
+        window.location.href = url.toString();
+      });
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Collection",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 6,
+      "max": 24,
+      "step": 2,
+      "default": 12
+    }
+  ]
+}
+{% endschema %}

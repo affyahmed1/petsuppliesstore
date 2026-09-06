@@ -1,0 +1,140 @@
+{%- liquid
+  if section.settings.collection != blank
+    assign pool_coll = collections[section.settings.collection]
+  else
+    assign pool_coll = collections.all
+  endif
+-%}
+<section class="sec-ink" id="concierge">
+  <div class="container">
+    <div class="concierge-grid">
+      <div class="concierge-intro">
+        <div class="rv-up">
+          <div class="eyebrow">
+            <span class="eyebrow__index">{{ section.settings.index }}</span>
+            <span class="eyebrow__rule"></span>
+            <span class="eyebrow__label">{{ section.settings.eyebrow }}</span>
+          </div>
+        </div>
+        <h2 class="display display-lg" style="margin-top: 2rem;">
+          <span class="rv-mask"><span class="rv-mask-inner">{{ section.settings.heading_1 }}</span></span>
+          <span class="rv-mask" style="transition-delay: 120ms;"><span class="rv-mask-inner"><em>{{ section.settings.heading_2 }}</em></span></span>
+        </h2>
+        <div class="rv-up" style="transition-delay: 240ms;">
+          <p class="copy" style="margin-top: 1.75rem; max-width: 24rem;">{{ section.settings.body }}</p>
+        </div>
+        <div class="rv-up" style="transition-delay: 340ms;">
+          <ul class="concierge-points">
+            {%- for point in section.settings.points | split: '|' -%}
+              {%- assign pt = point | strip -%}
+              {%- if pt != blank -%}
+                <li>
+                  {%- render 'icons', name: 'check', class: 'icon icon--sm' -%}
+                  {{ pt }}
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+        <div class="rv-up" style="transition-delay: 420ms;">
+          <p class="concierge-privacy">
+            {%- render 'icons', name: 'sparkle', class: 'icon icon--sm' -%}
+            {{ section.settings.privacy_note }}
+          </p>
+        </div>
+      </div>
+
+      <div class="concierge-panel-wrap">
+        <div class="rv-fade" style="transition-delay: 150ms;">
+          <div class="concierge-panel" data-concierge
+            data-species-question="{{ section.settings.species_question | escape }}"
+            data-profile-question="{{ section.settings.profile_question | escape }}"
+            data-curating-text="{{ section.settings.curating_text | escape }}"
+            data-curating-sub="{{ section.settings.curating_sub | escape }}"
+            data-edit-heading="{{ section.settings.edit_heading | escape }}">
+            <span class="tick tick--tl" aria-hidden="true"></span>
+            <span class="tick tick--tr" aria-hidden="true"></span>
+            <span class="tick tick--bl" aria-hidden="true"></span>
+            <span class="tick tick--br" aria-hidden="true"></span>
+
+            <div class="concierge-head">
+              <div>
+                <strong>{{ section.settings.panel_title }}</strong>
+                <span>{{ section.settings.panel_sub }}</span>
+              </div>
+              <div class="concierge-status">
+                <i></i> Online
+              </div>
+            </div>
+
+            <div class="concierge-progress" data-concierge-progress>
+              <div class="step-marker is-active" data-step-mark="0"><span class="step-marker__dot">1</span><span>Companion</span></div>
+              <div class="step-marker" data-step-mark="1"><span class="step-marker__dot">2</span><span>Profile</span></div>
+              <div class="step-marker" data-step-mark="2"><span class="step-marker__dot">3</span><span>The Edit</span></div>
+            </div>
+
+            <div class="concierge-step" data-concierge-step aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="application/json" id="kt-concierge-data">
+    [
+      {%- assign count = 0 -%}
+      {%- for p in pool_coll.products limit: 24 -%}
+        {%- if p.available -%}
+          {%- assign count = count | plus: 1 -%}
+          {%- if count > 1 -%},{%- endif -%}
+          {
+            "id": {{ p.id }},
+            "handle": {{ p.handle | json }},
+            "title": {{ p.title | json }},
+            "price": {{ p.price }},
+            "url": {{ p.url | json }},
+            "image": {{ p.featured_image | image_url: width: 400 | json }},
+            "tags": {{ p.tags | join: ',' | downcase | json }},
+            "variant": {{ p.variants.first.id }},
+            "reason": {{ p.metafields.kt.concierge_note.value | default: '' | json }}
+          }
+        {%- endif -%}
+      {%- endfor -%}
+    ]
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "Pet Concierge",
+  "settings": [
+    { "type": "text", "id": "index", "label": "Index", "default": "07" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The Concierge" },
+    { "type": "text", "id": "heading_1", "label": "Heading line 1", "default": "A quieter way" },
+    { "type": "text", "id": "heading_2", "label": "Heading line 2 (italic)", "default": "to shop." },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Body",
+      "default": "No scrolling, no noise. Tell the concierge a little about your companion and receive a small, considered edit — three pieces, chosen with care."
+    },
+    {
+      "type": "textarea",
+      "id": "points",
+      "label": "Bullet points",
+      "default": "Three questions, asked gently | A considered edit of three pieces | Add to your bag in one motion",
+      "info": "Separate with a pipe ( | )."
+    },
+    { "type": "text", "id": "privacy_note", "label": "Privacy note", "default": "Private session — nothing is stored" },
+    { "type": "collection", "id": "collection", "label": "Product pool", "info": "Products the concierge chooses from. Falls back to all products. Tag products with: dog/cat, comfort/play/meals/grooming/walks, young/adult/senior, calm/playful/adventurous." },
+    { "type": "text", "id": "panel_title", "label": "Panel title", "default": "Private Session" },
+    { "type": "text", "id": "panel_sub", "label": "Panel subtitle", "default": "Kin & Tail Concierge" },
+    { "type": "text", "id": "species_question", "label": "Step 1 question", "default": "Whom are we shopping for?" },
+    { "type": "text", "id": "profile_question", "label": "Step 2 question", "default": "Tell us a little about them." },
+    { "type": "text", "id": "curating_text", "label": "Curating text", "default": "The concierge is reading the shelves" },
+    { "type": "text", "id": "curating_sub", "label": "Curating subline", "default": "Considering the quiet details…" },
+    { "type": "text", "id": "edit_heading", "label": "Edit heading", "default": "The Edit — chosen with care." }
+  ],
+  "presets": [{ "name": "Pet Concierge" }]
+}
+{% endschema %}

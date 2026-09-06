@@ -11,7 +11,9 @@ export default function Collection() {
     filter === 'all' ? PRODUCTS : PRODUCTS.filter((p) => p.categories.includes(filter));
 
   const countFor = (id: string) =>
-    id === 'all' ? PRODUCTS.length : PRODUCTS.filter((p) => p.categories.includes(id as never)).length;
+    id === 'all'
+      ? PRODUCTS.length
+      : PRODUCTS.filter((p) => p.categories.includes(id as never)).length;
 
   return (
     <section id="collection" className="bg-ivory py-28 text-espresso lg:py-36">

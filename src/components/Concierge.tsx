@@ -274,7 +274,7 @@ export default function Concierge() {
                       What matters most right now
                     </p>
                     <div className="mt-3 flex flex-wrap gap-2.5">
-                      {FOCUS_OPTIONS.filter((f) => species === 'cat' ? f.id !== 'walk' : true).map((f) => (
+                      {FOCUS_OPTIONS.filter((f) => (species === 'cat' ? f.id !== 'walk' : true)).map((f) => (
                         <button key={f.id} type="button" onClick={() => setFocus(f.id)} className={seg(focus === f.id)}>
                           {f.label}
                         </button>

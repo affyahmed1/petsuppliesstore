@@ -1,0 +1,107 @@
+<section class="sec-light" id="bond">
+  <div class="container">
+    <div class="story-grid">
+      <div class="story-grid__copy">
+        <div class="rv-up">
+          <div class="eyebrow">
+            <span class="eyebrow__index">{{ section.settings.index }}</span>
+            <span class="eyebrow__rule"></span>
+            <span class="eyebrow__label">{{ section.settings.eyebrow }}</span>
+          </div>
+        </div>
+        <h2 class="display display-lg" style="margin-top: 2rem;">
+          {%- for line in section.settings.heading_lines | split: '|' -%}
+            {%- assign l = line | strip -%}
+            <span class="rv-mask" style="transition-delay: {{ 80 | times: forloop.index }}ms;">
+              <span class="rv-mask-inner">
+                {%- if forloop.index > 2 -%}<em>{{ l }}</em>{%- else -%}{{ l }}{%- endif -%}
+              </span>
+            </span>
+          {%- endfor -%}
+        </h2>
+        <div class="rv-up" style="transition-delay: 200ms;">
+          <p class="copy" style="margin-top: 2rem; max-width: 24rem;">{{ section.settings.body }}</p>
+        </div>
+        <div class="rv-up" style="transition-delay: 320ms;">
+          <div class="story-accent">
+            <span></span>
+            <p>{{ section.settings.accent_line }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="story-grid__media">
+        <div class="rv-fade" style="transition-delay: 150ms;">
+          <div class="story-frame">
+            <div class="story-img">
+              <img
+                data-parallax="0.06"
+                {%- if section.settings.image != blank %}
+                  src="{{ section.settings.image | image_url: width: 1200 }}"
+                  alt="{{ section.settings.image.alt | default: section.settings.image_alt | escape }}"
+                {%- else %}
+                  src="{{ section.settings.fallback_image_url }}"
+                  alt="{{ section.settings.image_alt | escape }}"
+                {%- endif %}
+                loading="lazy"
+                decoding="async">
+            </div>
+            {%- if section.settings.show_note -%}
+              <figure class="story-note">
+                <blockquote>{{ section.settings.note_quote }}</blockquote>
+                <figcaption>{{ section.settings.note_caption }}</figcaption>
+              </figure>
+            {%- endif -%}
+          </div>
+          <div class="story-caption">
+            <span>{{ section.settings.caption_left }}</span>
+            <span>{{ section.settings.caption_right }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Friendship Story",
+  "settings": [
+    { "type": "text", "id": "index", "label": "Index", "default": "01" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The Bond" },
+    {
+      "type": "textarea",
+      "id": "heading_lines",
+      "label": "Heading lines",
+      "default": "Different ways of | seeing the world. | One bond that | makes it better.",
+      "info": "Separate lines with a pipe ( | ). Lines after the second render in italic."
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Body",
+      "default": "One waits by the door. One watches from the sill. Both know exactly when you need them — and neither has ever asked for anything but your company."
+    },
+    { "type": "text", "id": "accent_line", "label": "Accent line", "default": "Kin & Tail exists for that bond." },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "url", "id": "fallback_image_url", "label": "Fallback image URL" },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Image alt text",
+      "default": "A tabby cat asleep against a sleeping brown dog on a knitted blanket"
+    },
+    { "type": "checkbox", "id": "show_note", "label": "Show editorial note", "default": true },
+    {
+      "type": "textarea",
+      "id": "note_quote",
+      "label": "Note quote",
+      "default": "“She waits by the door. He watches the sill. The house is only whole with both.”"
+    },
+    { "type": "text", "id": "note_caption", "label": "Note caption", "default": "A household, whole" },
+    { "type": "text", "id": "caption_left", "label": "Caption left", "default": "Milo & June" },
+    { "type": "text", "id": "caption_right", "label": "Caption right", "default": "Photographed at home — Sunday, 7:42 am" }
+  ],
+  "presets": [{ "name": "Friendship Story" }]
+}
+{% endschema %}

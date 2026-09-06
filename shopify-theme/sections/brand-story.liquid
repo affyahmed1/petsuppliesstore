@@ -1,0 +1,60 @@
+<section class="sec-dark brand-story" id="about">
+  <span class="brand-story__mark" aria-hidden="true">&amp;</span>
+  <div class="container">
+    <div class="brand-story__inner">
+      <div class="rv-up">
+        <div class="eyebrow center">
+          <span class="eyebrow__index">{{ section.settings.index }}</span>
+          <span class="eyebrow__rule"></span>
+          <span class="eyebrow__label">{{ section.settings.eyebrow }}</span>
+        </div>
+      </div>
+      <h2 class="display display-xl" style="margin-top: 2.25rem;">
+        <span class="rv-mask"><span class="rv-mask-inner">{{ section.settings.heading_1 }}</span></span>
+        <span class="rv-mask" style="transition-delay: 140ms;"><span class="rv-mask-inner"><em>{{ section.settings.heading_2 }}</em></span></span>
+      </h2>
+      <div class="rv-up" style="transition-delay: 280ms;">
+        <p class="copy" style="margin-top: 2.25rem;">{{ section.settings.paragraph_1 }}</p>
+      </div>
+      <div class="rv-up" style="transition-delay: 380ms;">
+        <p class="copy">{{ section.settings.paragraph_2 }}</p>
+      </div>
+      <div class="rv-up" style="transition-delay: 460ms;">
+        <span style="display: block; margin-top: 2.5rem; color: var(--cream);">
+          {%- render 'icons', name: 'paw', class: 'icon icon--lg' -%}
+        </span>
+        <p class="brand-sign">— {{ section.settings.signature }}</p>
+      </div>
+      <div class="rv-up" style="transition-delay: 540ms;">
+        <p class="brand-meta">{{ section.settings.meta }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Brand Story",
+  "settings": [
+    { "type": "text", "id": "index", "label": "Index", "default": "06" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "About" },
+    { "type": "text", "id": "heading_1", "label": "Heading line 1", "default": "For the ones who give us" },
+    { "type": "text", "id": "heading_2", "label": "Heading line 2 (italic)", "default": "everything." },
+    {
+      "type": "textarea",
+      "id": "paragraph_1",
+      "label": "Paragraph 1",
+      "default": "Kin & Tail began with a simple observation: the ones who love us most ask for the least. They wait. They watch. They forgive the late nights and the missed walks and greet us like heroes anyway."
+    },
+    {
+      "type": "textarea",
+      "id": "paragraph_2",
+      "label": "Paragraph 2",
+      "default": "So we make objects worthy of that devotion — quiet, useful, beautiful — for the animals who turn houses into homes."
+    },
+    { "type": "text", "id": "signature", "label": "Signature", "default": "Kin & Tail, Studio Notes N°4" },
+    { "type": "text", "id": "meta", "label": "Meta line", "default": "Est. 2021 · Small-batch · Dogs & Cats" }
+  ],
+  "presets": [{ "name": "Brand Story" }]
+}
+{% endschema %}

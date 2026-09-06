@@ -1,0 +1,62 @@
+<section class="search-page">
+  <div class="container">
+    <h1>
+      <span class="rv-mask"><span class="rv-mask-inner">{{ 'sections.search.title' | t }}</span></span>
+    </h1>
+
+    <form class="search-big-form rv-up" action="{{ routes.search_url }}" method="get" role="search">
+      <input
+        type="search"
+        name="q"
+        value="{{ search.terms | escape }}"
+        placeholder="{{ 'sections.search.placeholder' | t }}"
+        aria-label="{{ 'sections.search.placeholder' | t }}">
+      <input type="hidden" name="options[prefix]" value="last">
+      <button type="submit" aria-label="{{ 'sections.search.title' | t }}">
+        {%- render 'icons', name: 'search', class: 'icon' -%}
+      </button>
+    </form>
+
+    {%- if search.performed -%}
+      <p class="coll-count rv-up" style="margin-top: 2rem;">
+        {{ 'sections.search.results_for' | t }} “{{ search.terms | escape }}” — {{ search.results_count }} result{% if search.results_count != 1 %}s{% endif %}
+      </p>
+
+      {%- assign product_results = search.results | where: 'object_type', 'product' -%}
+      {%- if product_results.size > 0 -%}
+        <div class="product-grid">
+          {%- for item in product_results -%}
+            <div>
+              {%- render 'product-card', product: item -%}
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {%- if search.results_count == 0 -%}
+        <div class="empty-state">
+          <h2>{{ 'sections.search.no_results' | t }}</h2>
+          <a class="btn btn--solid-light" href="{{ routes.all_products_collection_url }}">Browse the collection</a>
+        </div>
+      {%- endif -%}
+
+      {%- for item in search.results -%}
+        {%- unless item.object_type == 'product' -%}
+          {%- if forloop.first -%}<div class="other-results">{%- endif -%}
+          <a href="{{ item.url }}">
+            <strong>{{ item.title }}</strong>
+            <span>{{ item.content | strip_html | truncate: 140 }}</span>
+          </a>
+          {%- if forloop.last -%}</div>{%- endif -%}
+        {%- endunless -%}
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Search",
+  "settings": []
+}
+{% endschema %}

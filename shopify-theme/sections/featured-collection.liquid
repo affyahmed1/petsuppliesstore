@@ -1,0 +1,135 @@
+{%- liquid
+  assign main_coll = collections[section.settings.collection]
+  assign seen = ','
+  assign rendered = 0
+-%}
+<section class="sec-light" id="collection">
+  <div class="container">
+    <div class="sec-head">
+      <div>
+        <div class="rv-up">
+          <div class="eyebrow">
+            <span class="eyebrow__index">{{ section.settings.index }}</span>
+            <span class="eyebrow__rule"></span>
+            <span class="eyebrow__label">{{ section.settings.eyebrow }}</span>
+          </div>
+        </div>
+        <h2 class="display display-lg" style="margin-top: 1.75rem;">
+          <span class="rv-mask"><span class="rv-mask-inner">{{ section.settings.heading_1 }}</span></span>
+          <span class="rv-mask" style="transition-delay: 120ms;"><span class="rv-mask-inner"><em>{{ section.settings.heading_2 }}</em></span></span>
+        </h2>
+      </div>
+
+      <div class="rv-up" style="transition-delay: 200ms;">
+        <div class="chip-row" role="group" aria-label="Filter collection" data-chip-row>
+          <button type="button" class="chip is-active" data-chip="all" aria-pressed="true">
+            {{ section.settings.all_label }} <sup data-chip-count="all"></sup>
+          </button>
+          {%- for i in (1..4) -%}
+            {%- assign label_setting = 'chip_label_' | append: i -%}
+            {%- assign coll_setting = 'chip_collection_' | append: i -%}
+            {%- assign label = section.settings[label_setting] -%}
+            {%- assign chip_coll = collections[section.settings[coll_setting]] -%}
+            {%- if label != blank and chip_coll != blank -%}
+              <button type="button" class="chip" data-chip="chip{{ i }}" aria-pressed="false">
+                {{ label }} <sup data-chip-count="chip{{ i }}"></sup>
+              </button>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+
+    <div class="product-grid" data-product-grid>
+      {%- comment -%} union of main collection + chip collections, de-duplicated {%- endcomment -%}
+      {%- assign all_products = '' | split: '' -%}
+      {%- if main_coll != blank -%}
+        {%- assign all_products = all_products | concat: main_coll.products -%}
+      {%- endif -%}
+      {%- for i in (1..4) -%}
+        {%- assign coll_setting = 'chip_collection_' | append: i -%}
+        {%- assign chip_coll = collections[section.settings[coll_setting]] -%}
+        {%- if chip_coll != blank -%}
+          {%- assign all_products = all_products | concat: chip_coll.products -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- for p in all_products -%}
+        {%- assign needle = ',' | append: p.handle | append: ',' -%}
+        {%- unless seen contains needle or rendered >= section.settings.products_limit -%}
+          {%- assign seen = seen | append: p.handle | append: ',' -%}
+          {%- assign rendered = rendered | plus: 1 -%}
+          {%- liquid
+            assign chip_list = 'all'
+            assign p_coll_handles = p.collections | map: 'handle'
+            for i in (1..4)
+              assign coll_setting = 'chip_collection_' | append: i
+              assign chip_coll = collections[section.settings[coll_setting]]
+              if chip_coll != blank and p_coll_handles contains chip_coll.handle
+                assign chip_list = chip_list | append: ',chip' | append: i
+              endif
+            endfor
+          -%}
+          <div data-card-slot data-chips="{{ chip_list }}" data-product-handle="{{ p.handle }}">
+            {%- render 'product-card', product: p -%}
+          </div>
+        {%- endunless -%}
+      {%- endfor -%}
+
+      {%- if rendered == 0 -%}
+        <div class="empty-state" style="grid-column: 1 / -1;">
+          <h2>The shelves are being stocked.</h2>
+          <p>Add products to the “{{ main_coll.title | default: 'featured' }}” collection in Shopify Admin → Products.</p>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="collection-foot rv-up">
+      <p>{{ section.settings.footnote }}</p>
+      {%- if main_coll != blank -%}
+        <a class="inline-link" href="{{ main_coll.url }}">
+          {{ section.settings.view_all_label }}
+          {%- render 'icons', name: 'arrow-right', class: 'icon icon--sm' -%}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured Collection",
+  "settings": [
+    { "type": "text", "id": "index", "label": "Index", "default": "03" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The Collection" },
+    { "type": "text", "id": "heading_1", "label": "Heading line 1", "default": "Objects for the" },
+    { "type": "text", "id": "heading_2", "label": "Heading line 2 (italic)", "default": "everyday ceremony." },
+    { "type": "collection", "id": "collection", "label": "Main collection", "info": "Products shown on “All” and behind “View all”." },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "label": "Maximum products",
+      "min": 4,
+      "max": 16,
+      "step": 1,
+      "default": 8
+    },
+    { "type": "text", "id": "all_label", "label": "“All” chip label", "default": "All" },
+    { "type": "text", "id": "footnote", "label": "Footnote", "default": "Made in small batches — numbered and finished by hand" },
+    { "type": "text", "id": "view_all_label", "label": "View all label", "default": "View the full collection" },
+    { "type": "header", "content": "Filter chip 1" },
+    { "type": "text", "id": "chip_label_1", "label": "Label", "default": "Dogs" },
+    { "type": "collection", "id": "chip_collection_1", "label": "Collection" },
+    { "type": "header", "content": "Filter chip 2" },
+    { "type": "text", "id": "chip_label_2", "label": "Label", "default": "Cats" },
+    { "type": "collection", "id": "chip_collection_2", "label": "Collection" },
+    { "type": "header", "content": "Filter chip 3" },
+    { "type": "text", "id": "chip_label_3", "label": "Label", "default": "Care" },
+    { "type": "collection", "id": "chip_collection_3", "label": "Collection" },
+    { "type": "header", "content": "Filter chip 4" },
+    { "type": "text", "id": "chip_label_4", "label": "Label", "default": "Home" },
+    { "type": "collection", "id": "chip_collection_4", "label": "Collection" }
+  ],
+  "presets": [{ "name": "Featured Collection" }]
+}
+{% endschema %}

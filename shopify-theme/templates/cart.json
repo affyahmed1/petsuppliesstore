@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "header": { "type": "header", "settings": {} },
+    "main": { "type": "main-cart", "settings": {} },
+    "footer": { "type": "footer", "settings": {} },
+    "overlays": { "type": "overlays", "settings": {} }
+  },
+  "order": ["header", "main", "footer", "overlays"]
+}

@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "header": { "type": "header", "settings": {} },
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "details": { "type": "details", "settings": {} },
+        "note": { "type": "share_note", "settings": {} }
+      },
+      "block_order": ["details", "note"]
+    },
+    "recommendations": { "type": "product-recommendations", "settings": {} },
+    "footer": { "type": "footer", "settings": {} },
+    "overlays": { "type": "overlays", "settings": {} }
+  },
+  "order": ["header", "main", "recommendations", "footer", "overlays"]
+}

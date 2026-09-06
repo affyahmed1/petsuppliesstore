@@ -1,0 +1,131 @@
+{%- comment -%}
+  Global overlays: cart drawer (real Shopify cart), wishlist drawer,
+  search modal (Shopify predictive search) and toast stack.
+{%- endcomment -%}
+
+{%- comment -%} ————— CART DRAWER ————— {%- endcomment -%}
+<div class="overlay" data-overlay="cart" hidden role="dialog" aria-modal="true" aria-label="{{ 'general.cart.title' | t }}">
+  <button class="scrim" data-close-overlay aria-label="{{ 'general.accessibility.close' | t }}"></button>
+  <aside class="drawer">
+    <div class="drawer__head">
+      <h3>{{ 'general.cart.title' | t }} <span>(<span data-cart-count-text>{{ cart.item_count }}</span>)</span></h3>
+      <button type="button" class="drawer__close" data-close-overlay aria-label="{{ 'general.accessibility.close' | t }}">
+        {%- render 'icons', name: 'close', class: 'icon icon--sm' -%}
+      </button>
+    </div>
+
+    <div class="drawer__body">
+      <div class="drawer__empty" data-cart-empty {% if cart.item_count > 0 %}hidden{% endif %}>
+        {%- render 'icons', name: 'bag', class: 'icon' -%}
+        <h4>{{ 'general.cart.empty' | t }}</h4>
+        <p>{{ 'general.cart.empty_hint' | t }}</p>
+        <a class="btn btn--solid-light" href="{{ routes.all_products_collection_url }}">Shop the Collection</a>
+      </div>
+      <ul class="line-list" data-cart-lines aria-live="polite"></ul>
+    </div>
+
+    <div class="drawer__foot" data-cart-foot {% if cart.item_count == 0 %}hidden{% endif %}>
+      <div class="ship-progress" data-ship-progress>
+        <div class="ship-progress__bar"><i data-ship-bar></i></div>
+        <p data-ship-note></p>
+      </div>
+      <div class="subtotal-row" style="margin-top: 1.25rem;">
+        <span>{{ 'general.cart.subtotal' | t }}</span>
+        <strong data-cart-subtotal>{{ cart.total_price | money }}</strong>
+      </div>
+      <p class="drawer__note">{{ 'general.cart.note' | t }}</p>
+      <form action="{{ routes.cart_url }}" method="post">
+        <button type="submit" name="checkout" class="btn btn--solid-light btn--block">{{ 'general.cart.checkout' | t }}</button>
+      </form>
+    </div>
+  </aside>
+</div>
+
+{%- comment -%} ————— WISHLIST DRAWER (localStorage, merchant-free) ————— {%- endcomment -%}
+<div class="overlay" data-overlay="wish" hidden role="dialog" aria-modal="true" aria-label="{{ 'general.wishlist.title' | t }}">
+  <button class="scrim" data-close-overlay aria-label="{{ 'general.accessibility.close' | t }}"></button>
+  <aside class="drawer">
+    <div class="drawer__head">
+      <h3>{{ 'general.wishlist.title' | t }} <span>(<span data-wish-count-text>0</span>)</span></h3>
+      <button type="button" class="drawer__close" data-close-overlay aria-label="{{ 'general.accessibility.close' | t }}">
+        {%- render 'icons', name: 'close', class: 'icon icon--sm' -%}
+      </button>
+    </div>
+    <div class="drawer__body">
+      <div class="drawer__empty" data-wish-empty>
+        {%- render 'icons', name: 'heart', class: 'icon' -%}
+        <h4>{{ 'general.wishlist.empty' | t }}</h4>
+        <p>{{ 'general.wishlist.empty_hint' | t }}</p>
+        <a class="btn btn--solid-light" href="{{ routes.all_products_collection_url }}">Discover the collection</a>
+      </div>
+      <ul class="line-list" data-wish-lines></ul>
+    </div>
+    <div class="drawer__foot" data-wish-foot hidden>
+      <p class="drawer__note" style="margin-top: 0;">Saved pieces stay here until you're ready — no rush, no reminders.</p>
+    </div>
+  </aside>
+</div>
+
+{%- comment -%} ————— SEARCH MODAL ————— {%- endcomment -%}
+<div class="overlay search-overlay" data-overlay="search" hidden role="dialog" aria-modal="true" aria-label="{{ 'sections.search.title' | t }}">
+  <button class="scrim" data-close-overlay aria-label="{{ 'general.accessibility.close' | t }}"></button>
+  <div class="search-modal">
+    <form class="search-input-row" action="{{ routes.search_url }}" method="get" role="search" data-search-form>
+      {%- render 'icons', name: 'search' -%}
+      <input
+        type="search"
+        name="q"
+        data-search-input
+        placeholder="{{ 'general.search.placeholder' | t }}"
+        aria-label="{{ 'general.search.placeholder' | t }}"
+        autocomplete="off">
+      <input type="hidden" name="options[prefix]" value="last">
+      <kbd>esc</kbd>
+      <button type="button" class="icon-btn" data-close-overlay aria-label="{{ 'general.accessibility.close' | t }}" style="width: 36px; height: 36px;">
+        {%- render 'icons', name: 'close', class: 'icon icon--sm' -%}
+      </button>
+    </form>
+    <div class="search-results" data-search-results aria-live="polite">
+      <p class="search-hint">{{ 'general.search.suggested' | t }}</p>
+      <div class="search-chips">
+        {%- assign chip_links = linklists[section.settings.menu].links -%}
+        {%- for link in chip_links limit: 6 -%}
+          <a href="{{ link.url }}">{{ link.title }}</a>
+        {%- endfor -%}
+      </div>
+      <p class="search-hint" style="margin-top: 2rem;">{{ 'general.search.often' | t }}</p>
+      <div class="search-terms">
+        {%- for term in section.settings.popular_terms | split: ',' -%}
+          {%- assign t = term | strip -%}
+          {%- if t != blank -%}
+            <button type="button" data-search-term="{{ t | escape }}">“{{ t }}”</button>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{%- comment -%} ————— TOASTS ————— {%- endcomment -%}
+<div class="toasts" data-toasts role="status" aria-live="polite"></div>
+
+{% schema %}
+{
+  "name": "Overlays",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Suggested links in search",
+      "default": "main-menu"
+    },
+    {
+      "type": "text",
+      "id": "popular_terms",
+      "label": "Popular search terms",
+      "default": "leather, bed, stoneware, play, brush",
+      "info": "Comma-separated."
+    }
+  ]
+}
+{% endschema %}

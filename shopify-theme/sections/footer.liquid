@@ -1,0 +1,115 @@
+{%- liquid
+  assign footer_menu = linklists[section.settings.menu]
+  assign policy_menu = linklists[section.settings.policy_menu]
+-%}
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="{{ routes.root_url }}" class="wordmark">KIN <span class="amp">&amp;</span> TAIL</a>
+        <p>{{ section.settings.intro_text }}</p>
+        <div class="footer-social">
+          {%- if settings.social_instagram != blank -%}
+            <a class="icon-btn" href="{{ settings.social_instagram }}" target="_blank" rel="noopener" aria-label="Instagram">
+              {%- render 'icons', name: 'instagram', class: 'icon' -%}
+            </a>
+          {%- endif -%}
+          {%- if settings.social_x != blank -%}
+            <a class="icon-btn" href="{{ settings.social_x }}" target="_blank" rel="noopener" aria-label="X (Twitter)">
+              {%- render 'icons', name: 'x', class: 'icon' -%}
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div>
+        <h3 class="footer-heading">Shop</h3>
+        <div class="footer-links">
+          {%- for link in footer_menu.links -%}
+            <a href="{{ link.url }}">{{ link.title }}</a>
+          {%- endfor -%}
+        </div>
+      </div>
+
+      <div>
+        <h3 class="footer-heading">Studio</h3>
+        <div class="footer-links">
+          {%- for link in policy_menu.links -%}
+            <a href="{{ link.url }}">{{ link.title }}</a>
+          {%- endfor -%}
+          {%- if policy_menu.links.size == 0 -%}
+            <a href="{{ routes.policies_shipping_policy_url }}">Shipping</a>
+            <a href="{{ routes.policies_refund_policy_url }}">Returns</a>
+            <a href="{{ routes.policies_privacy_policy_url }}">Privacy</a>
+            <a href="{{ routes.policies_terms_of_service_url }}">Terms</a>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="newsletter">
+        <h3 class="footer-heading">{{ 'general.newsletter.heading' | t }}</h3>
+        <p>{{ section.settings.newsletter_text | default: 'general.newsletter.text' | t }}</p>
+        {%- form 'customer', class: 'newsletter-form', data-newsletter: '' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <label class="skip-link" for="newsletter-email">{{ 'general.newsletter.placeholder' | t }}</label>
+          <input
+            id="newsletter-email"
+            type="email"
+            name="contact[email]"
+            autocomplete="email"
+            required
+            placeholder="{{ 'general.newsletter.placeholder' | t }}"
+            {%- if form.posted_successfully? %} disabled{% endif %}>
+          <button type="submit" aria-label="{{ 'general.newsletter.submit' | t }}">
+            {%- render 'icons', name: 'arrow-right', class: 'icon' -%}
+          </button>
+        {%- endform -%}
+        {%- if form.posted_successfully? -%}
+          <p style="margin-top: 0.75rem; font-size: 12px; color: var(--cream);">{{ 'general.newsletter.thanks' | t }}</p>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</p>
+      <div class="payment-icons">
+        {%- for type in shop.enabled_payment_types -%}
+          {{ type | payment_type_svg_tag }}
+        {%- endfor -%}
+      </div>
+      <p>Powered by <a href="https://www.shopify.com" target="_blank" rel="noopener">Shopify</a></p>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "intro_text",
+      "label": "Brand line",
+      "default": "Considered goods for dogs, cats, and the friendship between."
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Shop menu",
+      "default": "footer"
+    },
+    {
+      "type": "link_list",
+      "id": "policy_menu",
+      "label": "Studio menu",
+      "info": "Falls back to policy pages when empty."
+    },
+    {
+      "type": "text",
+      "id": "newsletter_text",
+      "label": "Newsletter text",
+      "default": "Occasional letters on new pieces and the animals they're made for. No noise."
+    }
+  ]
+}
+{% endschema %}

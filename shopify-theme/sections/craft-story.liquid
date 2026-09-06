@@ -1,0 +1,121 @@
+<section class="sec-dark" id="craft">
+  <div class="container">
+    <div class="craft-grid">
+      <div class="craft-media">
+        <div class="rv-fade">
+          <div class="craft-sticky">
+            {%- if section.settings.image != blank -%}
+              <img src="{{ section.settings.image | image_url: width: 1200 }}" alt="{{ section.settings.image.alt | default: section.settings.image_alt | escape }}" loading="lazy" decoding="async">
+            {%- else -%}
+              <img src="{{ section.settings.fallback_image_url }}" alt="{{ section.settings.image_alt | escape }}" loading="lazy" decoding="async">
+            {%- endif -%}
+            <div class="craft-caption">
+              <h3>{{ section.settings.caption_title }}</h3>
+              <p>{{ section.settings.caption_sub }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="craft-copy">
+        <div class="rv-up">
+          <div class="eyebrow">
+            <span class="eyebrow__index">{{ section.settings.index }}</span>
+            <span class="eyebrow__rule"></span>
+            <span class="eyebrow__label">{{ section.settings.eyebrow }}</span>
+          </div>
+        </div>
+        <h2 class="display display-lg" style="margin-top: 1.75rem;">
+          <span class="rv-mask"><span class="rv-mask-inner">{{ section.settings.heading_1 }}</span></span>
+          <span class="rv-mask" style="transition-delay: 120ms;"><span class="rv-mask-inner"><em>{{ section.settings.heading_2 }}</em></span></span>
+        </h2>
+        <div class="rv-up" style="transition-delay: 220ms;">
+          <p class="copy" style="margin-top: 1.75rem; max-width: 26rem;">{{ section.settings.body }}</p>
+        </div>
+
+        <div class="craft-list">
+          {%- for block in section.blocks -%}
+            <div class="craft-item rv-up" style="transition-delay: {{ forloop.index0 | times: 90 }}ms;" {{ block.shopify_attributes }}>
+              <span class="craft-item__n">0{{ forloop.index }}</span>
+              <div>
+                <h3>{{ block.settings.title }}</h3>
+                <p>{{ block.settings.text }}</p>
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+
+        <div class="craft-stats rv-up" style="transition-delay: 200ms;">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'stat' -%}
+              <div {{ block.shopify_attributes }}>
+                <strong>{{ block.settings.value }}</strong>
+                <span>{{ block.settings.label }}</span>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Craft Story",
+  "settings": [
+    { "type": "text", "id": "index", "label": "Index", "default": "04" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The Craft" },
+    { "type": "text", "id": "heading_1", "label": "Heading line 1", "default": "Crafted for" },
+    { "type": "text", "id": "heading_2", "label": "Heading line 2 (italic)", "default": "daily life." },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Body",
+      "default": "Thoughtful materials. Considered details. Made for the moments that matter — the long walk, the slow meal, the deep sleep."
+    },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "url", "id": "fallback_image_url", "label": "Fallback image URL" },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Image alt text",
+      "default": "Hands stitching a leather collar at a wooden workbench"
+    },
+    { "type": "text", "id": "caption_title", "label": "Caption title", "default": "Made slowly, on purpose." },
+    { "type": "text", "id": "caption_sub", "label": "Caption sub", "default": "The studio bench — where every piece begins" }
+  ],
+  "blocks": [
+    {
+      "type": "craft_item",
+      "name": "Craft point",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Materials" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Vegetable-tanned leather, undyed wool, glazed stoneware." }
+      ]
+    },
+    {
+      "type": "stat",
+      "name": "Stat",
+      "settings": [
+        { "type": "text", "id": "value", "label": "Value", "default": "08" },
+        { "type": "text", "id": "label", "label": "Label", "default": "Pieces" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Craft Story",
+      "blocks": [
+        { "type": "craft_item", "settings": { "title": "Materials", "text": "Vegetable-tanned leather, undyed wool, glazed stoneware." } },
+        { "type": "craft_item", "settings": { "title": "Construction", "text": "Hand-stitched seams, weighted bases, replaceable parts." } },
+        { "type": "craft_item", "settings": { "title": "Comfort", "text": "Tested by the harshest critics we know — our own." } },
+        { "type": "craft_item", "settings": { "title": "Longevity", "text": "Designed to be repaired, refilled and passed on." } },
+        { "type": "stat", "settings": { "value": "08", "label": "Pieces" } },
+        { "type": "stat", "settings": { "value": "100%", "label": "Small-batch" } },
+        { "type": "stat", "settings": { "value": "0", "label": "Shortcuts" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

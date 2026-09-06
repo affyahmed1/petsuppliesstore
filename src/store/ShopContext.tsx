@@ -8,58 +8,70 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { PRODUCTS, getProduct } from '../data/products';
+import { getProduct } from '../data/products';
 import type { CartLine, CategoryId, ToastIcon, ToastItem } from '../types';
 
-interface ShopContextValue {
+export function scrollToId(id: string) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+}
+
+interface ShopState {
   cart: CartLine[];
-  wishlist: string[];
-  toasts: ToastItem[];
-  bagOpen: boolean;
-  wishOpen: boolean;
-  searchOpen: boolean;
-  menuOpen: boolean;
-  detailId: string | null;
-  filter: CategoryId | 'all';
   cartCount: number;
   subtotal: number;
-  setFilter: (f: CategoryId | 'all') => void;
-  setBagOpen: (v: boolean) => void;
-  setWishOpen: (v: boolean) => void;
-  setSearchOpen: (v: boolean) => void;
-  setMenuOpen: (v: boolean) => void;
-  setDetailId: (id: string | null) => void;
   addToBag: (id: string, qty?: number) => void;
   removeFromBag: (id: string) => void;
   setQty: (id: string, qty: number) => void;
   clearCart: () => void;
-  toggleWishlist: (id: string) => void;
   moveToBag: (id: string) => void;
+
+  wishlist: string[];
+  toggleWishlist: (id: string) => void;
+
+  bagOpen: boolean;
+  setBagOpen: (v: boolean) => void;
+  wishOpen: boolean;
+  setWishOpen: (v: boolean) => void;
+  searchOpen: boolean;
+  setSearchOpen: (v: boolean) => void;
+  menuOpen: boolean;
+  setMenuOpen: (v: boolean) => void;
+
+  detailId: string | null;
+  setDetailId: (id: string | null) => void;
+
+  filter: CategoryId | 'all';
+  setFilter: (f: CategoryId | 'all') => void;
+
+  toasts: ToastItem[];
   pushToast: (message: string, icon?: ToastIcon) => void;
 }
 
-const ShopContext = createContext<ShopContextValue | null>(null);
+const ShopContext = createContext<ShopState | null>(null);
 
-let toastSeq = 0;
+let toastSeq = 1;
 
 export function ShopProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartLine[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
-  const [toasts, setToasts] = useState<ToastItem[]>([]);
   const [bagOpen, setBagOpen] = useState(false);
   const [wishOpen, setWishOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
   const [filter, setFilter] = useState<CategoryId | 'all'>('all');
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
   const timers = useRef<number[]>([]);
 
   const pushToast = useCallback((message: string, icon: ToastIcon = 'check') => {
-    const id = ++toastSeq;
+    const id = toastSeq++;
     setToasts((t) => [...t.slice(-2), { id, message, icon }]);
     const timer = window.setTimeout(() => {
       setToasts((t) => t.filter((x) => x.id !== id));
-    }, 3400);
+    }, 2800);
     timers.current.push(timer);
   }, []);
 
@@ -71,8 +83,8 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const addToBag = useCallback(
     (id: string, qty = 1) => {
       setCart((c) => {
-        const line = c.find((l) => l.id === id);
-        if (line) {
+        const existing = c.find((l) => l.id === id);
+        if (existing) {
           return c.map((l) => (l.id === id ? { ...l, qty: Math.min(9, l.qty + qty) } : l));
         }
         return [...c, { id, qty }];
@@ -88,21 +100,27 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setQty = useCallback((id: string, qty: number) => {
-    setCart((c) => c.map((l) => (l.id === id ? { ...l, qty: Math.min(9, Math.max(1, qty)) } : l)));
+    setCart((c) =>
+      qty <= 0
+        ? c.filter((l) => l.id !== id)
+        : c.map((l) => (l.id === id ? { ...l, qty: Math.min(9, qty) } : l)),
+    );
   }, []);
 
   const clearCart = useCallback(() => setCart([]), []);
 
   const toggleWishlist = useCallback(
     (id: string) => {
-      const p = getProduct(id);
       setWishlist((w) => {
-        if (w.includes(id)) {
-          pushToast(`${p?.name ?? 'Piece'} — removed from wishlist`, 'heart');
-          return w.filter((x) => x !== id);
+        const has = w.includes(id);
+        const p = getProduct(id);
+        if (p) {
+          pushToast(
+            has ? `${p.name} — removed from wishlist` : `${p.name} — saved to wishlist`,
+            'heart',
+          );
         }
-        pushToast(`${p?.name ?? 'Piece'} — saved to wishlist`, 'heart');
-        return [...w, id];
+        return has ? w.filter((x) => x !== id) : [...w, id];
       });
     },
     [pushToast],
@@ -116,81 +134,70 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     [addToBag],
   );
 
-  const { cartCount, subtotal } = useMemo(() => {
-    let count = 0;
-    let sum = 0;
-    for (const line of cart) {
-      const p = PRODUCTS.find((x) => x.id === line.id);
-      if (!p) continue;
-      count += line.qty;
-      sum += p.price * line.qty;
-    }
-    return { cartCount: count, subtotal: sum };
-  }, [cart]);
-
-  /* lock page scroll behind any overlay */
-  const overlayOpen = bagOpen || wishOpen || searchOpen || menuOpen || detailId !== null;
+  /* scroll lock while any overlay is open */
   useEffect(() => {
-    document.documentElement.style.overflow = overlayOpen ? 'hidden' : '';
+    const anyOpen = bagOpen || wishOpen || searchOpen || menuOpen || detailId !== null;
+    document.body.style.overflow = anyOpen ? 'hidden' : '';
     return () => {
-      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
     };
-  }, [overlayOpen]);
+  }, [bagOpen, wishOpen, searchOpen, menuOpen, detailId]);
 
-  /* "/" opens search from anywhere */
+  /* "/" opens search */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
-      const typing =
-        target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable);
-      if (e.key === '/' && !typing && !searchOpen) {
+      if (e.key === '/' && target && !/INPUT|TEXTAREA|SELECT/.test(target.tagName)) {
         e.preventDefault();
         setSearchOpen(true);
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [searchOpen]);
+  }, []);
 
-  const value: ShopContextValue = {
+  const cartCount = useMemo(() => cart.reduce((n, l) => n + l.qty, 0), [cart]);
+  const subtotal = useMemo(
+    () =>
+      cart.reduce((sum, l) => {
+        const p = getProduct(l.id);
+        return sum + (p ? p.price * l.qty : 0);
+      }, 0),
+    [cart],
+  );
+
+  const value: ShopState = {
     cart,
-    wishlist,
-    toasts,
-    bagOpen,
-    wishOpen,
-    searchOpen,
-    menuOpen,
-    detailId,
-    filter,
     cartCount,
     subtotal,
-    setFilter,
-    setBagOpen,
-    setWishOpen,
-    setSearchOpen,
-    setMenuOpen,
-    setDetailId,
     addToBag,
     removeFromBag,
     setQty,
     clearCart,
-    toggleWishlist,
     moveToBag,
+    wishlist,
+    toggleWishlist,
+    bagOpen,
+    setBagOpen,
+    wishOpen,
+    setWishOpen,
+    searchOpen,
+    setSearchOpen,
+    menuOpen,
+    setMenuOpen,
+    detailId,
+    setDetailId,
+    filter,
+    setFilter,
+    toasts,
     pushToast,
   };
 
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;
 }
 
-export function useShop(): ShopContextValue {
+export function useShop(): ShopState {
   const ctx = useContext(ShopContext);
-  if (!ctx) throw new Error('useShop must be used inside ShopProvider');
+  if (!ctx) throw new Error('useShop must be used within ShopProvider');
   return ctx;
-}
-
-export function scrollToId(id: string) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
 }

@@ -5,15 +5,14 @@ interface ProductImageProps {
   image: string;
   crop: CropSide;
   alt: string;
-  className?: string; // wrapper (supplies aspect ratio)
+  className?: string; // wrapper
   imgClassName?: string; // img (transitions, hover scale)
   eager?: boolean;
 }
 
 /**
- * Renders campaign plates. Duo plates hold two products side by side;
- * the left/right crops isolate each half without stretching, whatever
- * the plate's native aspect ratio.
+ * Renders campaign plates. Duo plates (2:1) are cropped to a
+ * clean left/right half; the wrapper supplies the aspect ratio.
  */
 export default function ProductImage({
   image,
@@ -23,15 +22,8 @@ export default function ProductImage({
   imgClassName = '',
   eager = false,
 }: ProductImageProps) {
-  const sideStyle: CSSProperties = {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '200%',
-    height: '100%',
-    objectFit: 'cover',
-    objectPosition: crop === 'left' ? 'left center' : 'right center',
-  };
+  const side: CSSProperties =
+    crop === 'left' ? { left: 0 } : crop === 'right' ? { right: 0 } : {};
 
   return (
     <div className={`relative overflow-hidden bg-linen ${className}`}>
@@ -51,8 +43,8 @@ export default function ProductImage({
           loading={eager ? 'eager' : 'lazy'}
           decoding="async"
           draggable={false}
-          className={imgClassName}
-          style={sideStyle}
+          className={`absolute top-0 h-full w-auto max-w-none min-w-[200%] ${imgClassName}`}
+          style={side}
         />
       )}
     </div>

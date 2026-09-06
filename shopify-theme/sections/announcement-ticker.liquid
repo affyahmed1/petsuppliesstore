@@ -1,0 +1,34 @@
+{%- if section.settings.items != blank -%}
+  {%- assign items = section.settings.items | split: '|' -%}
+  <div class="ticker" aria-label="Announcements">
+    <div class="ticker__track animate-ticker">
+      {%- for i in (1..2) -%}
+        <div class="ticker__row" {% if forloop.last %}aria-hidden="true"{% endif %}>
+          {%- for item in items -%}
+            {%- assign label = item | strip -%}
+            {%- if label != blank -%}
+              <span>{{ label }}</span>
+              {%- render 'icons', name: 'paw', class: 'icon' -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Ticker",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "items",
+      "label": "Ticker items",
+      "default": "Thoughtfully made | Small batches | Natural materials | For dogs & cats | Complimentary shipping over $120 | Designed to be kept",
+      "info": "Separate items with a pipe character ( | )."
+    }
+  ],
+  "presets": [{ "name": "Ticker" }]
+}
+{% endschema %}

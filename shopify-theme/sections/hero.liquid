@@ -1,0 +1,154 @@
+<section class="hero" id="top" data-hero>
+  <div class="hero__media">
+    {%- if section.settings.image != blank -%}
+      <img
+        src="{{ section.settings.image | image_url: width: 2000 }}"
+        srcset="{{ section.settings.image | image_url: width: 1200 }} 1200w, {{ section.settings.image | image_url: width: 2000 }} 2000w"
+        sizes="100vw"
+        alt="{{ section.settings.image.alt | default: section.settings.image_alt | escape }}"
+        class="kenburns"
+        fetchpriority="high"
+        width="{{ section.settings.image.width }}"
+        height="{{ section.settings.image.height }}">
+    {%- else -%}
+      <img
+        src="{{ section.settings.fallback_image_url }}"
+        alt="{{ section.settings.image_alt | escape }}"
+        class="kenburns"
+        fetchpriority="high"
+        loading="eager">
+    {%- endif -%}
+  </div>
+
+  <div class="container hero__inner">
+    <div class="hero__kicker" data-hero-el style="transition-delay: 150ms;">
+      <span></span>
+      <p>{{ section.settings.eyebrow }}</p>
+    </div>
+
+    <h1>
+      <span class="rv-mask" data-hero-el="mask" style="transition-delay: 250ms;">
+        <span class="rv-mask-inner">{{ section.settings.heading_line_1 }}</span>
+      </span>
+      <span class="rv-mask" data-hero-el="mask" style="transition-delay: 400ms;">
+        <span class="rv-mask-inner">{{ section.settings.heading_line_2 }} <em>{{ section.settings.heading_emphasis }}</em></span>
+      </span>
+    </h1>
+
+    <p class="hero__copy" data-hero-el style="transition-delay: 600ms;">{{ section.settings.subtext }}</p>
+
+    <div class="hero__ctas" data-hero-el style="transition-delay: 750ms;">
+      {%- if section.settings.button_1_label != blank -%}
+        <a class="btn btn--solid-dark" href="{{ section.settings.button_1_link | default: routes.all_products_collection_url }}">
+          {{ section.settings.button_1_label }}
+          <span class="btn__dot"></span>
+        </a>
+      {%- endif -%}
+      {%- if section.settings.button_2_label != blank -%}
+        <a class="btn btn--ghost-dark" href="{{ section.settings.button_2_link | default: routes.all_products_collection_url }}">
+          {{ section.settings.button_2_label }}
+          <span class="btn__dot"></span>
+        </a>
+      {%- endif -%}
+    </div>
+
+    <div class="hero__meta" data-hero-el style="transition-delay: 950ms;">
+      <div class="hero__scroll">
+        <span class="hero__scroll-line"><i></i></span>
+        {{ section.settings.scroll_hint }}
+      </div>
+      <p class="hero__aside">{{ section.settings.aside_text }}</p>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "Full-bleed cinematic image. Cat + dog together recommended."
+    },
+    {
+      "type": "url",
+      "id": "fallback_image_url",
+      "label": "Fallback image URL",
+      "info": "Used only when no image is selected."
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Image alt text",
+      "default": "A chocolate-brown dog and a cream cat sitting together in golden window light"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Kin & Tail — Lifestyle goods for dogs & cats"
+    },
+    {
+      "type": "text",
+      "id": "heading_line_1",
+      "label": "Heading line 1",
+      "default": "Made for every"
+    },
+    {
+      "type": "text",
+      "id": "heading_line_2",
+      "label": "Heading line 2",
+      "default": "kind of"
+    },
+    {
+      "type": "text",
+      "id": "heading_emphasis",
+      "label": "Italic emphasis",
+      "default": "friendship."
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Supporting copy",
+      "default": "Considered objects for the companions we love — leather, stoneware and wool, designed with care and made to be lived with."
+    },
+    {
+      "type": "text",
+      "id": "button_1_label",
+      "label": "Button 1 label",
+      "default": "Shop for Dogs"
+    },
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "Button 1 link"
+    },
+    {
+      "type": "text",
+      "id": "button_2_label",
+      "label": "Button 2 label",
+      "default": "Shop for Cats"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Button 2 link"
+    },
+    {
+      "type": "text",
+      "id": "scroll_hint",
+      "label": "Scroll hint",
+      "default": "Scroll — the story of us"
+    },
+    {
+      "type": "text",
+      "id": "aside_text",
+      "label": "Aside text",
+      "default": "Different personalities — one bond"
+    }
+  ],
+  "presets": [{ "name": "Hero" }]
+}
+{% endschema %}
